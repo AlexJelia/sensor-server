@@ -1,7 +1,11 @@
 package org.app.sensorserver.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
@@ -17,28 +21,20 @@ public class Sensor {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     private int id;
 
-    @NotEmpty
+    @NotEmpty(message = "Name should not be empty")
     @Size(min = 3,max = 30,message = "Name from 3 to 30 symbols")
-    @Column(name = "name")
+    @Column(name = "name",unique = true)
     private String name;
 
-    @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
+    @NotNull
+    @Column(name = "registered",  columnDefinition = "timestamp default now()")
     @Temporal(TemporalType.TIMESTAMP)
     private Date registered = new Date();
 
-
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "sensor")
+    @JsonIgnore
+    @OneToMany(mappedBy = "sensor")
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     private List<Measurement> measurements;
-
-    public Sensor() {
-    }
-
-    //todo check
-    public Sensor(int id, String name, Date registered) {
-        this.id = id;
-        this.name = name;
-        this.registered = registered;
-    }
 
     public int getId() {
         return id;

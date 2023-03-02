@@ -1,10 +1,12 @@
 package org.app.sensorserver.util;
 
-public class SensorErrorResponse {
-    private String message;
-    private long timestamp;
+import java.util.Date;
 
-    public SensorErrorResponse(String message, long timestamp) {
+public class ErrorResponse {
+    private String message;
+    private Date timestamp;
+
+    public ErrorResponse(String message, Date timestamp) {
         this.message = message;
         this.timestamp = timestamp;
     }
@@ -17,11 +19,11 @@ public class SensorErrorResponse {
         this.message = message;
     }
 
-    public long getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(long timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 }

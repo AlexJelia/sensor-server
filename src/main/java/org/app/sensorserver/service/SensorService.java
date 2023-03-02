@@ -2,7 +2,7 @@ package org.app.sensorserver.service;
 
 import org.app.sensorserver.model.Sensor;
 import org.app.sensorserver.repository.SensorRepository;
-import org.app.sensorserver.util.exceptions.SensorNotFoundException;
+import org.app.sensorserver.util.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +11,6 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class SensorService {
-
     private final SensorRepository sensorRepository;
 
     public SensorService(SensorRepository sensorRepository) {
@@ -28,6 +27,6 @@ public class SensorService {
     }
 
     public Sensor getSensor(int id) {
-        return sensorRepository.findById(id).orElseThrow(SensorNotFoundException::new);
+        return sensorRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 }

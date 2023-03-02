@@ -1,7 +1,10 @@
 package org.app.sensorserver.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "measurement")
@@ -14,24 +17,24 @@ public class Measurement {
     private int id;
 
     @Column(name = "value")
-    @Size(min = -100,max = 100,message = "Temperature from -100 to 100")
+    @NotNull
+    @Min(-100)
+    @Max(100)
     private double value;
 
     @Column(name = "raining")
+    @NotNull
     private boolean raining;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "sensor_id",referencedColumnName = "id")
     private Sensor sensor;
 
-    public Measurement() {
-    }
-
-    //todo check
-    public Measurement(int id, double value, boolean raining, Sensor sensor) {
-        this.value = value;
-        this.raining = raining;
-    }
+    @Column(name = "registered", columnDefinition = "timestamp default now()")
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registered = new Date();
 
     public int getId() {
         return id;
@@ -63,5 +66,13 @@ public class Measurement {
 
     public void setSensor(Sensor sensor) {
         this.sensor = sensor;
+    }
+
+    public Date getRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(Date registered) {
+        this.registered = registered;
     }
 }

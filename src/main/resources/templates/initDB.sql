@@ -13,11 +13,11 @@ CREATE TABLE sensor(
 CREATE TABLE measurement
 (
     id        INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
-    sensor_id   INTEGER NOT NULL,
-    value DECIMAL NOT NULL,
+    sensor_id    INTEGER NOT NULL,
+    value DOUBLE PRECISION NOT NULL,
     raining BOOLEAN NOT NULL,
     registered timestamp DEFAULT now() NOT NULL,
-    FOREIGN KEY (sensor_id) REFERENCES sensor (id) ON DELETE CASCADE
+    FOREIGN KEY (sensor_id) REFERENCES sensor (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX measurement_idx ON measurement (id);
 CREATE UNIQUE INDEX sensors_idx ON measurement (id,sensor_id);

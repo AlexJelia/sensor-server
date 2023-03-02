@@ -2,29 +2,33 @@ package org.app.sensorserver.web;
 
 import org.app.sensorserver.service.SensorService;
 import org.app.sensorserver.to.SensorTo;
-import org.app.sensorserver.util.SensorErrorResponse;
+import org.app.sensorserver.util.ErrorResponse;
 import org.app.sensorserver.util.SensorUtil;
-import org.app.sensorserver.util.exceptions.SensorNotCreatedException;
+import org.app.sensorserver.util.ValidationUtil;
+import org.app.sensorserver.util.exceptions.NotCreatedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.app.sensorserver.util.SensorUtil.asTo;
 import static org.app.sensorserver.util.SensorUtil.createNewFromTo;
-import static org.app.sensorserver.util.ValidationUtil.validate;
+
 
 @RestController
 @RequestMapping("/sensors")
 public class SensorController {
     private final SensorService service;
+    private final ValidationUtil validator;
 
-    public SensorController(SensorService service) {
+    public SensorController(SensorService service, ValidationUtil validator) {
         this.service = service;
+        this.validator = validator;
     }
 
     @GetMapping("/{id}")
@@ -41,20 +45,17 @@ public class SensorController {
 
     @PostMapping("registration")
     public ResponseEntity<HttpStatus> register(@RequestBody @Valid SensorTo sensorTo, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            validate(bindingResult);
-        }
+        validator.validateSensor(sensorTo,bindingResult);
         service.register(createNewFromTo(sensorTo));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ExceptionHandler
-    private ResponseEntity<SensorErrorResponse> handleException(SensorNotCreatedException e){
-        SensorErrorResponse response = new SensorErrorResponse(
+    private ResponseEntity<ErrorResponse> handleException(NotCreatedException e){
+        ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
-                System.currentTimeMillis()
+                new Date()
         );
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-
 }
